@@ -8,24 +8,25 @@ register = template.Library()
 def weight_display(value, unit):
     """
     Display a weight value in the user's preferred unit.
-    :param value: the weight as a float (stored in the user's unit)
+    Weights are stored as total ounces (whole numbers).
+    :param value: total ounces as a float/int
     :param unit: 'kg' or 'lb'
     :returns: formatted string with unit label
     """
     if value is None:
         return ""
     try:
-        value = float(value)
+        total_oz = int(round(float(value)))
     except (TypeError, ValueError):
         return str(value)
     if unit == "lb":
-        total_oz = round(value * 16)
         lbs = total_oz // 16
         oz = total_oz % 16
         if oz == 0:
             return f"{lbs} lbs"
         return f"{lbs} lbs {oz} oz"
-    return f"{value:g} kg"
+    kg = total_oz * 0.0283495
+    return f"{kg:.2f} kg"
 
 
 @register.filter

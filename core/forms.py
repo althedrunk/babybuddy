@@ -436,9 +436,21 @@ class TummyTimeForm(CoreModelForm, TaggableModelForm):
 
 
 class WeightForm(CoreModelForm, TaggableModelForm):
+    weight_lbs = forms.IntegerField(
+        label=_("Pounds"),
+        min_value=0,
+        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "lbs"}),
+    )
+    weight_oz = forms.IntegerField(
+        label=_("Ounces"),
+        min_value=0,
+        max_value=15,
+        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "oz"}),
+    )
+
     fieldsets = [
         {
-            "fields": ["child", "weight", "date"],
+            "fields": ["child", "weight_lbs", "weight_oz", "date"],
             "layout": "required",
         },
         {"fields": ["notes", "tags"], "layout": "advanced"},
@@ -446,7 +458,7 @@ class WeightForm(CoreModelForm, TaggableModelForm):
 
     class Meta:
         model = models.Weight
-        fields = ["child", "weight", "date", "notes", "tags"]
+        fields = ["child", "date", "notes", "tags"]
         widgets = {
             "child": ChildRadioSelect,
             "date": DateInput(),
@@ -454,15 +466,19 @@ class WeightForm(CoreModelForm, TaggableModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        weight_unit = kwargs.pop("weight_unit", "lb")
+        kwargs.pop("weight_unit", None)
         super().__init__(*args, **kwargs)
-        if weight_unit == "lb":
-            self.fields["weight"].label = _("Weight (lbs)")
-            self.fields["weight"].help_text = _(
-                "Enter weight in decimal pounds (e.g. 8.5 for 8 lbs 8 oz)."
-            )
-        else:
-            self.fields["weight"].label = _("Weight (kg)")
-            self.fields["weight"].help_text = _(
-                "Enter weight in kilograms (e.g. 3.5 for 3.5 kg)."
-            )
+        if self.instance and self.instance.pk and self.instance.weight is not None:
+            total_oz = int(round(float(self.instance.weight)))
+            self.fields["weight_lbs"].initial = total_oz // 16
+            self.fields["weight_oz"].initial = total_oz % 16
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        lbs = self.cleaned_data.get("weight_lbs") or 0
+        oz = self.cleaned_data.get("weight_oz") or 0
+        instance.weight = lbs * 16 + oz
+        if commit:
+            instance.save()
+            self.save_m2m()
+        return instance

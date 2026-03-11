@@ -12,8 +12,8 @@ DATABASES = {
     }
 }
 
-# Media files
-MEDIA_ROOT = os.path.join(BASE_DIR, "data/media")
+# Media files — must match the volume mount in docker-compose
+MEDIA_ROOT = "/app/media"
 
 # Static files:
 # STATICFILES_DIRS lists SOURCE directories for collectstatic.
