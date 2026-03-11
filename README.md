@@ -40,7 +40,7 @@ Quick start with Docker Compose — replace the official image reference:
 services:
   babybuddy:
     build:
-      context: /path/to/this/repo
+      context: /path/to/your/cloned/babybuddy  # e.g. /home/youruser/babybuddy
       dockerfile: Dockerfile
     image: babybuddy-local:latest
     environment:
