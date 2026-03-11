@@ -26,4 +26,5 @@ RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-CMD ["gunicorn", "-c", "/app/gunicorn.py", "babybuddy.wsgi:application"]
+# Run migrations then start the server
+CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn -c /app/gunicorn.py babybuddy.wsgi:application"]
