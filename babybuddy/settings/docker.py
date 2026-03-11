@@ -13,7 +13,13 @@ DATABASES = {
 }
 
 # Media files
-MEDIA_ROOT = os.path.join(BASE_DIR, "../data/media")
+MEDIA_ROOT = os.path.join(BASE_DIR, "data/media")
 
-# Static files
-STATIC_ROOT = os.path.join(BASE_DIR, "../static")
+# Static files:
+# STATICFILES_DIRS lists SOURCE directories for collectstatic.
+# The repo's static/ folder contains root-level assets (icons, etc.)
+# that are not inside any Django app's static/ subfolder.
+# STATIC_ROOT is the TARGET where collected + hashed files are written.
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = "/app/collected_static"
+WHITENOISE_ROOT = "/app/collected_static/babybuddy/root"
