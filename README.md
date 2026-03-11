@@ -1,14 +1,13 @@
 <img src="babybuddy/static_src/logo/icon.png" height="150" align="left">
 
-# Baby Buddy
+# Baby Buddy (Imperial / lbs & oz Fork)
 
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/babybuddy/Lobby)
-[![CI Status](https://github.com/babybuddy/babybuddy/actions/workflows/ci.yml/badge.svg)](https://github.com/babybuddy/babybuddy/actions/workflows/ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/babybuddy/babybuddy/badge.svg?branch=master)](https://coveralls.io/github/babybuddy/babybuddy?branch=master)
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/babybuddy/babybuddy)
-[![Open in GitHub Codespaces ready-to-code](https://img.shields.io/badge/Codespace-ready--to--code-blue?logo=github)](https://codespaces.new/babybuddy/babybuddy?quickstart=1)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+> **This is a fork of [babybuddy/babybuddy](https://github.com/babybuddy/babybuddy) with modifications to default weight tracking to pounds and ounces (lbs/oz) instead of kilograms.**
+> See [Changes from upstream](#-changes-from-upstream) below for full details.
 
 A buddy for babies! Helps caregivers track sleep, feedings, diaper changes,
 tummy time and more to learn about and predict baby's needs without (_as much_)
@@ -17,6 +16,52 @@ guess work.
 ![Baby Buddy desktop view](screenshot.png)
 
 ![Baby Buddy mobile views](screenshot_mobile.png)
+
+## 🔧 Changes from upstream
+
+This fork modifies the official Baby Buddy project in the following ways:
+
+### Weight tracking in lbs & oz
+
+- **Default weight unit is pounds and ounces (lbs/oz)** for all new users. Kilograms remain available as a per-user setting under *User Settings → Weight Unit*.
+- **Weight entry uses two separate fields** — *Pounds* and *Ounces* — so you never need to do decimal conversions. Just type `13` lbs and `7` oz.
+- **Weight is stored as total ounces** internally (e.g. 13 lbs 7 oz = 215 oz), which avoids floating-point rounding issues with values like 10–15 oz.
+- **Weight lists and graphs** display values in the format `X lbs Y oz` when lbs/oz is selected.
+
+> **Migrating from the official image?** If your existing weight entries were recorded in the legacy `lbs.oz` decimal format (e.g. `13.7` to mean 13 lbs 7 oz), the included database migration (`core/0036`) will automatically convert them to the new total-ounces format on first run.
+
+### Docker / self-hosting
+
+A `Dockerfile` and `babybuddy/settings/docker.py` are included so you can build and run this fork directly from source without relying on the upstream Docker Hub image.
+
+Quick start with Docker Compose — replace the official image reference:
+
+```yaml
+services:
+  babybuddy:
+    build:
+      context: /path/to/this/repo
+      dockerfile: Dockerfile
+    image: babybuddy-local:latest
+    environment:
+      - DJANGO_SETTINGS_MODULE=babybuddy.settings.docker
+      - SECRET_KEY=your-secret-key-here
+      - DB_ENGINE=django.db.backends.postgresql
+      - DB_NAME=babybuddy
+      - DB_USER=youruser
+      - DB_PASSWORD=yourpassword
+      - DB_HOST=babybuddy-db
+      - DB_PORT=5432
+      - CSRF_TRUSTED_ORIGINS=https://yourdomain.com
+    volumes:
+      - ./media:/app/media
+    ports:
+      - "8000:8000"
+```
+
+Migrations (including the weight conversion) run automatically on container startup.
+
+---
 
 ## 👾 Demo
 
