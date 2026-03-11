@@ -591,12 +591,26 @@ class WeightAdd(CoreAddView):
     form_class = forms.WeightForm
     success_url = reverse_lazy("core:weight-list")
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["weight_unit"] = getattr(
+            getattr(self.request.user, "settings", None), "weight_unit", "lb"
+        )
+        return kwargs
+
 
 class WeightUpdate(CoreUpdateView):
     model = models.Weight
     permission_required = ("core.change_weight",)
     form_class = forms.WeightForm
     success_url = reverse_lazy("core:weight-list")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["weight_unit"] = getattr(
+            getattr(self.request.user, "settings", None), "weight_unit", "lb"
+        )
+        return kwargs
 
 
 class WeightDelete(CoreDeleteView):

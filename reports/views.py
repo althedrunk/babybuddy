@@ -390,8 +390,11 @@ class WeightChangeChildReport(PermissionRequiredMixin, DetailView):
         percentile_weights = models.WeightPercentile.objects.filter(sex=self.sex)
         context["target_url"] = self.target_url
         if actual_weights:
+            weight_unit = getattr(
+                getattr(self.request.user, "settings", None), "weight_unit", "lb"
+            )
             context["html"], context["js"] = graphs.weight_change(
-                actual_weights, percentile_weights, birthday
+                actual_weights, percentile_weights, birthday, weight_unit=weight_unit
             )
         return context
 

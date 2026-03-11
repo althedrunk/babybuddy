@@ -10,7 +10,10 @@ from reports import utils
 
 
 def weight_change(
-    actual_weights: BaseManager, percentile_weights: BaseManager, birthday: datetime
+    actual_weights: BaseManager,
+    percentile_weights: BaseManager,
+    birthday: datetime,
+    weight_unit: str = "lb",
 ):
     """
     Create a graph showing weight over time.
@@ -84,7 +87,7 @@ def weight_change(
     layout_args["title"] = "<b>" + _("Weight") + "</b>"
     layout_args["xaxis"]["title"] = _("Date")
     layout_args["xaxis"]["rangeselector"] = utils.rangeselector_date()
-    layout_args["yaxis"]["title"] = _("Weight")
+    layout_args["yaxis"]["title"] = _("Weight (lbs)") if weight_unit == "lb" else _("Weight (kg)")
     if percentile_weights:
         # zoom in on the relevant dates
         layout_args["xaxis"]["range"] = [

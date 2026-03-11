@@ -129,6 +129,15 @@ class Settings(models.Model):
         default=25,
         verbose_name=_("Items Per Page"),
     )
+    weight_unit = models.CharField(
+        choices=[
+            ("kg", _("Kilograms (kg)")),
+            ("lb", _("Pounds and ounces (lbs/oz)")),
+        ],
+        default="lb",
+        max_length=8,
+        verbose_name=_("Weight Unit"),
+    )
 
     def __str__(self):
         return str(format_lazy(_("{user}'s Settings"), user=self.user))

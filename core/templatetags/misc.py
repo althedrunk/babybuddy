@@ -5,6 +5,30 @@ register = template.Library()
 
 
 @register.filter
+def weight_display(value, unit):
+    """
+    Display a weight value in the user's preferred unit.
+    :param value: the weight as a float (stored in the user's unit)
+    :param unit: 'kg' or 'lb'
+    :returns: formatted string with unit label
+    """
+    if value is None:
+        return ""
+    try:
+        value = float(value)
+    except (TypeError, ValueError):
+        return str(value)
+    if unit == "lb":
+        total_oz = round(value * 16)
+        lbs = total_oz // 16
+        oz = total_oz % 16
+        if oz == 0:
+            return f"{lbs} lbs"
+        return f"{lbs} lbs {oz} oz"
+    return f"{value:g} kg"
+
+
+@register.filter
 def next(some_list, current_index):
     """
     Returns the element at the next index of the zero-indexed list

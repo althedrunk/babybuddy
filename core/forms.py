@@ -452,3 +452,17 @@ class WeightForm(CoreModelForm, TaggableModelForm):
             "date": DateInput(),
             "notes": forms.Textarea(attrs={"rows": 5}),
         }
+
+    def __init__(self, *args, **kwargs):
+        weight_unit = kwargs.pop("weight_unit", "lb")
+        super().__init__(*args, **kwargs)
+        if weight_unit == "lb":
+            self.fields["weight"].label = _("Weight (lbs)")
+            self.fields["weight"].help_text = _(
+                "Enter weight in decimal pounds (e.g. 8.5 for 8 lbs 8 oz)."
+            )
+        else:
+            self.fields["weight"].label = _("Weight (kg)")
+            self.fields["weight"].help_text = _(
+                "Enter weight in kilograms (e.g. 3.5 for 3.5 kg)."
+            )
